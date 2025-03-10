@@ -47,7 +47,7 @@ export async function registerUserController(request,response){
 
         const verifyEmail = await sendEmail({
             sendTo : email,
-            subject : "Verify email from binkeyit",
+            subject : "Verify email from BLINKIT",
             html : verifyEmailTemplate({
                 name,
                 url : VerifyEmailUrl
@@ -211,33 +211,41 @@ export async function logoutController(request,response){
 }
 
 //upload user avatar
-export async  function uploadAvatar(request,response){
+export async function uploadAvatar(request, response) {
     try {
-        const userId = request.userId // auth middlware
-        const image = request.file  // multer middleware
+        const userId = request.userId; // auth middleware
+        const image = request.file; // multer middleware
+        console.log("image",image)
+        if (!image) {
+            return response.status(400).json({
+                message: "No image file provided",
+                error: true,
+                success: false
+            });
+        }
 
-        const upload = await uploadImageClodinary(image)
-        
-        const updateUser = await UserModel.findByIdAndUpdate(userId,{
-            avatar : upload.url
-        })
+        const upload = await uploadImageClodinary(image);
+
+        const updateUser = await UserModel.findByIdAndUpdate(userId, {
+            avatar: upload.url
+        });
 
         return response.json({
-            message : "upload profile",
-            success : true,
-            error : false,
-            data : {
-                _id : userId,
-                avatar : upload.url
+            message: "upload profile",
+            success: true,
+            error: false,
+            data: {
+                _id: userId,
+                avatar: upload.url
             }
-        })
+        });
 
     } catch (error) {
         return response.status(500).json({
-            message : error.message || error,
-            error : true,
-            success : false
-        })
+            message: error.message || error,
+            error: true,
+            success: false
+        });
     }
 }
 
